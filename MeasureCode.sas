@@ -282,12 +282,106 @@ QUIT;
 /*Step 6 Exclude maternity and surgery to get medicine*/
 proc sql;
 create table &lib..Medicine as
+select a.* from &lib..Surgery C
+left join &lib.Surgery C
+on a.memid=c.memid
+and a.DATE_ADM=c.DATE_ADM
+AND A.DATE_DISCH=C·DATE_DISCH
+where c.memid is null;
+
+/*Creat final result table*/
+
+proc sql;
+create table &lib.. result as
+select Memld
+, 'IPUT' AS Meas
+,Payer
+,1 as Proc
+,LOS
+,0 as MM 
+,Age
+,Gender 
+from &lib..FINAL_IPUT_1
+union
+select Memld
+,'IPUMAT' AS Meas
+,Payer
+,1 as Proc
+,LOS
+,0 as MM
+,Age
+,Gender
+from &lib..Maternity
+union
+select Memid
+, 'IPUS' AS Meas
+,Payer
+,1 as Proc
+,LOS
+,0 as MM
+,Age
+,Gender
+from &lib..Surgery
+union
+select Memid
+,'IPUM' AS Meas
+,Payer 
+,1 as Proc
+,LOS
+,0 as MM
+,Age
+,Gender
+from &lib..Medicine;
+quit;
+
+/*Match with score key*/
+
+PROC SQL;
+CREATE TABLE LESS AS
+SELECT DISTINCT b.* FROM &lib .. result a FULL OUTER JOIN &lib..&lib.
+_Scorekeyl b ON a.memid = b.memid AND A.PAYER=B.PAYER AND A.LOS=B.LOS
+AND A.MEAS=B.MEAS WHERE a.memid IS NULL;
+QUIT;
+
+/*Match with score key*/
+
+PROC SQL;
+CREATE TABLE extra AS
+SELECT DISTINCT a.* FROM &lib .. result a FULL OUTER JOIN &lib .. &lib.
+_Scorekeyl b ON a.memid = b.memid-and_g.LOS=B.LOS AND A.PAYER=B.PAYER
+ANO A.MEAS=B.MEAS WHERE,b.memid IS NULL;
+QUIT; 
+
+
+/*Check with scorekey*/
+
+PROC SQL;
+CREATE TABLE &LIB.. IPU answer check AS
+SELECT
+CASE
+WHEN a.Memid=b.Memid THEN 1
+ELSE 0
+END AS MEMID CHECK,
+CASE
+WHEN a.Meas=b.Meas THEN 1
+ELSE 0
+END AS Meas_CHECK,
+CASE
+WHEN a.Payer=b.Payer THEN 1
+ELSE 0
+END AS Payer_CHECK,
+(a.Proc-b.Proc) AS Proc_Diff,(a.LOS-b.LOS) AS LOS Diff ,(a.MM-b.MM) AS
+MM_Diff,(a.Age-b.Age) AS Age_Diff,
+CASE
+WHEN a.Gender=b.Gender THEN 1
+ELSE 0
+END AS Gender_CHECK FROM &LIB..&LIB._Scorekeyl a
+LEFT JOIN &lib.. result b ON a.Memld=b.Memld AND a.Meas=b.Meas;
+QUIT;
 
 
 
-
-
-
+/**********END OF ANALYSIS********/
 
 
 

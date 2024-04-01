@@ -1,7 +1,6 @@
-/****connecting to database, assigning a libref using a macro variable, defining a macro variable******/
+/**** assigning a libref using a macro variable, defining a macro variable******/
 
 
-%INCLUDE ' '; %CONNECT2DB(ASCR); 
 %LET LTA = IPU; 
 LIBNAME &LIB. 1C:\IPU'; 
 %LET MEASURE NAME 'IPU'; %LET MEASURE'- IPU; 
@@ -67,8 +66,8 @@ quit;
 
 /*hospice*/
 
-%include 'hidden for privacy'; 
-%INCLUDE 'hidden for privacy'; 
+%include ''; 
+%INCLUDE ''; 
 %ASCR_DATES(HEDIS_YEAR=&YEAR.);
 %HOSPICE( MATCH_DATA = &LIB..hos, 
 year= 2020 ,LIB = &lib. 

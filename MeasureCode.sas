@@ -1,4 +1,4 @@
-/****connecting to database******/
+/****connecting to database, assigning a libref using a macro variable, defining a macro variable******/
 
 
 %INCLUDE ' '; %CONNECT2DB(ASCR); 
@@ -26,10 +26,12 @@ LIBNAME &LIB. 1C:\IPU';
 %PUT &EVENT END DTM.; 
 
 /*Last day of measurement year*/ 
+
 %INCLUDE 'W:\QUALITY HEDIS MEASURES\QUALITY TEST DECK 2020\Infile \LOAD_DATA.SAS'; 
 %LOAD_DATA( MEASURE NAME = 'IPU', YEAR = 2020, DECK_TYPE = 'Sample', REGION = 'MAS', LIB = &LIB. ); 
 
 /*Assign record_id to all visits*/ 
+
 data &lib..visit; set &lib..visite; record id . _n_-1; run;
 
 /*Create Score Key*/
@@ -58,6 +60,7 @@ ORDER BY VALUE_SET_NAME, CODE_SYSTEM, CODE;
 QUIT; 
 
 /**Age**/
+
 proc sql; 
 create table &lib..memage as select memid, gender, dob from &iib..member_gm; 
 quit; 
@@ -85,6 +88,7 @@ by memid;
 quit; 
 
 /*exclude hosipce*/ 
+
 proc sql; 
 CREATE TABLE &lib..allhospice AS SELECT DISTINCT A.MEMID, 'HOSPICE' AS TYP 
 FROM &LIB..hos A 
@@ -137,8 +141,10 @@ PROC SQL;
 DELETE FROM &lib..all_lob 
 WHERE payer IN ('MD','MLI','MRB','MCD') AND CATX('#',memid,startdate,finishdate) IN (SELECT CATX('#',memid,startdate,finishdate) FROM &lib..ce_mcr_mbr); 
 QUIT; 
+
 /*Step 1-1*/ 
 /*Inpatient Stay Visits*/ 
+
 proc sql; 
 create table &lib..Step11 as 
 SELECT v.*, c.VALUE_SET_NAME AS visit_type 
@@ -170,6 +176,7 @@ QUIT;
 
 /*Step 2-1*/ 
 /*Exclude Mental & Deliveries Stay*/ 
+
 proc sql; 
 create table &lib..Step2 as 
 SELECT DISTINCT v.*, c.VALUE_SET_NAME AS visit_type2, c.code_system 
@@ -181,6 +188,7 @@ QUIT;
 
 /*Step 3*/ 
 /*Total Inpatient*/ 
+
 PROC SQL; 
 CREATE TABLE &lib..IPUT AS 
 SELECT DISTINCT a.* 
@@ -190,6 +198,7 @@ ORDER BY record id, date adm, date_disch;
 QUIT; 
 
 /*IPUT with payer*/ 
+
 proc sql; 
 create table &lib..FINAL_IPUT as 
 select distinct A.memid ,A.DATE_ADM ,A.DATE_DISCH, 'IPUT' AS MEAS
@@ -218,6 +227,7 @@ ORDER BY memid;
 QUIT;
 
 /*Use Memid date adm date disch in final_iput join back to vist to get all visits*/
+
 proc sql;
 create table &lib.. allvisit as
 select a.* ,b.payer,b.Age,b.gender,b.los
@@ -230,6 +240,7 @@ QUIT;
 
 
 /*Step 4 Maternity*/
+
 proc sql;
 create table &lib..Maternity as
 SELECT DISTINCT A.* FROM
@@ -249,6 +260,7 @@ QUIT;
 
 /*Step 5 for Surgery*/
 /*Exclude Maternity from Final Inpatient*/
+
 proc sql;
 create table &lib .. Nonmaternity as
 select a.* from &lib.. FINAL_IPUT_1 a
@@ -260,6 +272,7 @@ where b.memid is null;
 quit; 
 
 /*Use Memid date_adm date_disch in final_iput join back to vist to get all visits for surgery*/
+
 proc sql;
 create table &lib.. allvisitsur as
 select a.* ,b.payer,b.age,b.gender,b.los
@@ -271,6 +284,7 @@ AND A.DATE_DISCH=B.DATE_DISCH;
 QUIT;
 
 /*Step 5 Final Surgery*/
+
 proc sql;
 create table &lib..Surgery as
 SELECT DISTINCT v.*, c.VALUE_SET_NAME AS visit_type2, c.code_system
@@ -283,6 +297,7 @@ QUIT;
 
 
 /*Step 6 Exclude maternity and surgery to get medicine*/
+
 proc sql;
 create table &lib..Medicine as
 select a.* from &lib..Surgery C

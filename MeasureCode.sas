@@ -27,7 +27,7 @@ LIBNAME &LIB. 1C:\IPU';
 
 /*Last day of measurement year*/ 
 
-%INCLUDE 'W:\QUALITY HEDIS MEASURES\QUALITY TEST DECK 2020\Infile \LOAD_DATA.SAS'; 
+%INCLUDE 'hidden for privacy'; 
 %LOAD_DATA( MEASURE NAME = 'IPU', YEAR = 2020, DECK_TYPE = 'Sample', REGION = 'MAS', LIB = &LIB. ); 
 
 /*Assign record_id to all visits*/ 
@@ -67,8 +67,8 @@ quit;
 
 /*hospice*/
 
-%include '\\MARDCFILE010\mgos$\QIUALITY HEDIS MEASURES\QUALITY TEST\DECK 2020\Infile\hospice.sas'; 
-%INCLUDE '\\MARDCFILE010\mgos$\QUALITY HEDIS MEASURES\QUALITY TEST\DECK 2020\Infile\ASCR DATES.SAS'; 
+%include 'hidden for privacy'; 
+%INCLUDE 'hidden for privacy'; 
 %ASCR_DATES(HEDIS_YEAR=&YEAR.);
 %HOSPICE( MATCH_DATA = &LIB..hos, 
 year= 2020 ,LIB = &lib. 

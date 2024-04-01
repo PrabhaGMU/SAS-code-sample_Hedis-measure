@@ -26,7 +26,7 @@ LIBNAME &LIB. 1C:\IPU';
 
 /*Last day of measurement year*/ 
 
-%INCLUDE 'hidden for privacy'; 
+%INCLUDE ''; 
 %LOAD_DATA( MEASURE NAME = 'IPU', YEAR = 2020, DECK_TYPE = 'Sample', REGION = 'MAS', LIB = &LIB. ); 
 
 /*Assign record_id to all visits*/ 

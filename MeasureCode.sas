@@ -13,7 +13,7 @@ LIBNAME &LIB. 1C:\IPU';
 %LET EVENT_ END DTM; 
 
 %LET DECK_TYPE = 'Sample'; 
-%LET REGION = 'MAS'; 
+%LET REGION = ''; 
 
 %PUT &MEASURE_NAME.; 
 %PUT &DECK_TYPE.; 
@@ -27,7 +27,7 @@ LIBNAME &LIB. 1C:\IPU';
 /*Last day of measurement year*/ 
 
 %INCLUDE ''; 
-%LOAD_DATA( MEASURE NAME = 'IPU', YEAR = 2020, DECK_TYPE = 'Sample', REGION = 'MAS', LIB = &LIB. ); 
+%LOAD_DATA( MEASURE NAME = 'IPU', YEAR = 2020, DECK_TYPE = 'Sample', REGION = '', LIB = &LIB. ); 
 
 /*Assign record_id to all visits*/ 
 
